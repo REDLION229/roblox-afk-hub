@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roblox AFK Hub</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== Sidebar ===================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true">
+        <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8fafd"/><stop offset="1" stop-color="#7f8ba0"/></linearGradient></defs>
+        <g transform="rotate(-15 17 23)"><path fill="url(#bm)" fill-rule="evenodd" d="M5 11h24v24H5z M13.4 19.4h7.2v7.2h-7.2z"/></g>
+        <path fill="#aa96ff" d="M31.6 1.6a7.4 7.4 0 1 0 6.9 10.6 6 6 0 1 1-6.9-10.6z"/>
+      </svg></div>
+      <div><b>Roblox AFK Hub</b><span>Your AFK toolkit</span></div>
+    </div>
+    <button class="nav-btn" data-page="home"><svg class="i" data-icon="home"></svg>Home</button>
+    <button class="nav-btn" data-page="launch"><svg class="i" data-icon="rocket"></svg>Launch</button>
+    <button class="nav-btn" data-page="presets"><svg class="i" data-icon="grid"></svg>Presets</button>
+    <button class="nav-btn" data-page="macros"><svg class="i" data-icon="macro"></svg>Macros<span class="count live hidden" id="nav-macro-live">●</span></button>
+    <button class="nav-btn" data-page="accounts"><svg class="i" data-icon="users"></svg>Accounts<span class="count" id="nav-acct-count"></span></button>
+    <button class="nav-btn" data-page="stats"><svg class="i" data-icon="chart"></svg>Stats</button>
+    <button class="nav-btn" data-page="settings"><svg class="i" data-icon="gear"></svg>Settings</button>
+    <button class="nav-btn" data-page="customize"><svg class="i" data-icon="palette"></svg>Customize</button>
+    <button class="nav-btn" data-page="misc"><svg class="i" data-icon="info"></svg>Misc</button>
+    <div class="side-foot">
+      <label class="lite-toggle" title="Lite mode: turn off every extra (avatar, friends, account status, Discord, effects) in one go. Anti-AFK, multi-instance, launching and macros keep running.">
+        <span><b>Lite mode</b><small id="lite-sub">Extras on</small></span>
+        <span class="switch"><input type="checkbox" data-cfg="liteMode"><span></span></span>
+      </label>
+      <span class="lbl">Theme</span>
+      <div class="theme-dots" id="theme-dots"></div>
+      <span class="lbl" id="admin-note"></span>
+      <button class="side-version" id="side-version" title="Click to check for updates"><span class="v"></span><span class="dot"></span><span class="s"></span></button>
+    </div>
+  </aside>
+
+  <!-- ===================== Main ===================== -->
+  <main>
+    <header class="topbar">
+      <div>
+        <h1 id="page-title">Home</h1>
+        <p id="page-sub"></p>
+      </div>
+      <div class="top-right">
+        <button class="chip update-chip hidden" id="chip-update" title="A new version is out. Click to see what's new and update."><svg class="i" data-icon="refresh"></svg><span class="t"></span></button>
+        <span class="chip" id="chip-multi" title="Multi-instance lets several Roblox windows run at once."><span class="dot"></span><span class="t"></span></span>
+        <button class="chip" id="chip-antiafk" title="Click to pause or resume anti-AFK for every window."><span class="dot"></span><span class="t"></span></button>
+        <button class="btn afk-btn" id="afk-btn"></button>
+        <button class="btn afk-close hidden" id="afk-close-btn" title="I'm back, and close every Roblox window too"><svg class="i" data-icon="x"></svg>Back &amp; close all</button>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+
+      <!-- ===================== HOME ===================== -->
+      <section class="page" id="page-home">
+        <div class="resume-banner hidden" id="resume-banner">
+          <svg class="i" data-icon="refresh"></svg>
+          <div class="txt"><b>Resuming your AFK setup</b><span id="resume-text"></span></div>
+          <button class="btn sm" id="resume-cancel">Cancel</button>
+        </div>
+        <div class="card hero hidden" id="hero">
+          <div class="hero-main">
+            <div class="hello">
+              <span class="label" id="hero-greet">Hello</span>
+              <div class="name-row">
+                <h2 id="hero-name"></h2>
+                <select class="mini-select hidden" id="hero-switch" title="Which account greets you"></select>
+              </div>
+              <p id="hero-sub"></p>
+              <div class="row" id="hero-chips"></div>
+              <div class="row hero-actions">
+                <button class="btn primary" id="hero-relaunch"><span class="rl-icon"></span><span class="rl-text">Relaunch last setup</span></button>
+                <button class="btn" data-goto="launch"><svg class="i" data-icon="rocket"></svg>Launch…</button>
+              </div>
+              <div class="row hero-presets hidden" id="hero-presets"></div>
+            </div>
+            <div class="hero-avatar" id="hero-avatar">
+              <div class="tilt" id="hero-tilt"><img id="hero-img" alt=""></div>
+              <button class="btn icon sm hero-refresh" id="hero-refresh" title="Refresh your avatar (after changing your outfit on Roblox)"><svg class="i" data-icon="refresh"></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="card hidden" id="mode-card">
+          <div class="card-head"><div><h2 class="card-title">Welcome! How will you use Roblox AFK Hub?</h2><p class="card-sub">This just picks sensible defaults. You can change any of it in Settings.</p></div></div>
+          <div class="mode-pick">
+            <button class="mode-opt" data-mode="play"><svg class="i" data-icon="users"></svg><b>Play on several accounts</b><span>Open many Roblox windows at once and play them yourself.</span></button>
+            <button class="mode-opt" data-mode="afk"><svg class="i" data-icon="moon"></svg><b>AFK while I'm away</b><span>Keep accounts in game for hours: anti-AFK, auto-rejoin, phone alerts and macros.</span></button>
+          </div>
+        </div>
+        <div class="card hidden" id="guide-card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Get started in 3 steps</h2>
+              <p class="card-sub">Once these are done, launching your AFK setup is one click.</p>
+            </div>
+            <button class="btn ghost sm" id="guide-dismiss">Hide</button>
+          </div>
+          <div class="guide" id="guide-steps"></div>
+        </div>
+
+        <div class="grid grid-4">
+          <div class="card stat">
+            <div class="head"><span class="label">AFK session</span><svg class="i" data-icon="clock"></svg></div>
+            <div class="value" id="st-afk">—</div>
+            <div class="foot" id="st-afk-foot"></div>
+            <svg class="spark" id="spark-afk" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="card stat">
+            <div class="head"><span class="label">Roblox windows</span><svg class="i" data-icon="layers"></svg></div>
+            <div class="value" id="st-win">0</div>
+            <div class="foot" id="st-win-foot"></div>
+          </div>
+          <div class="card stat">
+            <div class="head"><span class="label">Anti-AFK presses</span><svg class="i" data-icon="bolt"></svg></div>
+            <div class="value" id="st-press">0</div>
+            <div class="foot" id="st-press-foot"></div>
+            <svg class="spark" id="spark-press" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="card stat">
+            <div class="head"><span class="label">Disconnects</span><svg class="i" data-icon="alert"></svg></div>
+            <div class="value" id="st-disc">0</div>
+            <div class="foot" id="st-disc-foot"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Roblox windows</h2>
+              <p class="card-sub">Every open Roblox window, with its own anti-AFK timer. The bar fills up until the next key press.</p>
+            </div>
+            <div class="row" style="flex-wrap:nowrap">
+              <button class="btn sm hidden" id="arrange-tile" title="Lay the Roblox windows out side by side, so you can watch them all"><svg class="i" data-icon="grid"></svg>Tile</button>
+              <button class="btn sm hidden" id="arrange-stack" title="Put the Roblox windows neatly on top of each other"><svg class="i" data-icon="layers"></svg>Stack</button>
+              <button class="btn sm" data-goto="launch"><svg class="i" data-icon="rocket"></svg>Launch accounts</button>
+            </div>
+          </div>
+          <div class="win-list" id="win-list"></div>
+          <div class="empty hidden" id="win-empty">
+            <div class="big-icon"><svg class="i" data-icon="layers"></svg></div>
+            <b>No Roblox windows open</b>
+            <span>Launch your accounts from the Launch page, or open Roblox the usual way — it shows up here automatically.</span>
+            <button class="btn primary" data-goto="launch"><svg class="i" data-icon="rocket"></svg>Go to Launch</button>
+          </div>
+        </div>
+
+        <div class="grid split">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Frame rate cap</h2>
+                <p class="card-sub">Lower FPS = less CPU and heat. Roblox reads this when a window opens.</p>
+              </div>
+              <div class="fps-now"><span class="value" id="fps-now">—</span><span class="unit">FPS</span></div>
+            </div>
+            <div class="stack">
+              <div class="seg" id="fps-seg"></div>
+              <div class="row">
+                <span class="muted small">Custom</span>
+                <input class="input num" id="fps-custom" type="number" min="1" max="999" placeholder="FPS">
+                <button class="btn sm" id="fps-set">Set</button>
+              </div>
+            </div>
+            <div class="setting-line" style="margin-top:12px">
+              <div class="txt"><b>Lock the settings file</b><span>Stops Roblox from changing the FPS back when a window closes. AFK mode does this for you.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" id="fps-lock"><span></span></label></div>
+            </div>
+            <p class="muted small" style="margin:6px 0 0" id="fps-note">Windows that are already open keep their FPS until they rejoin.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Activity</h2>
+                <p class="card-sub">What the app has been doing.</p>
+              </div>
+            </div>
+            <div class="feed" id="feed"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== LAUNCH ===================== -->
+      <section class="page" id="page-launch">
+        <div class="grid split">
+          <div class="stack" style="gap:18px">
+            <div class="card step-card">
+              <div class="card-head"><span class="step-num">1</span><div><h2 class="card-title">Choose a game</h2><p class="card-sub">Paste a game link, a private server link, a roblox.com/share link, or a place ID.</p></div></div>
+              <div class="link-row">
+                <input class="input" id="link" placeholder="https://www.roblox.com/games/…" spellcheck="false">
+                <button class="btn" id="fav-save" title="Save this link so it's one click next time"><svg class="i" data-icon="star"></svg>Save</button>
+              </div>
+              <div class="parsed" id="parsed"></div>
+              <div class="favs" id="favs"></div>
+            </div>
+
+            <div class="card step-card">
+              <div class="card-head"><span class="step-num">2</span><div><h2 class="card-title">Pick accounts</h2><p class="card-sub">Each one opens in its own window, one after another, at the FPS set on the Accounts page.</p></div></div>
+              <div class="pick-list" id="pick-list"></div>
+              <div class="empty hidden" id="pick-empty">
+                <b>No accounts yet</b>
+                <span>Add your Roblox accounts first — it only takes a minute.</span>
+                <button class="btn primary" data-goto="accounts"><svg class="i" data-icon="plus"></svg>Add accounts</button>
+              </div>
+            </div>
+
+            <div class="card step-card">
+              <div class="card-head"><span class="step-num">3</span><div><h2 class="card-title">Launch</h2><p class="card-sub">Sit back — the app handles multi-instance, FPS and anti-AFK.</p></div></div>
+              <div class="setting-line" style="padding-top:0">
+                <div class="txt"><b>Put all accounts in the same server</b><span>Public games normally scatter accounts across servers. This waits for the first account to join, then sends the rest into that exact server.</span></div>
+                <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="joinTogether"><span></span></label></div>
+              </div>
+              <div class="setting-line">
+                <div class="txt"><b>Start AFK mode first</b><span>Sets your AFK FPS and starts the session timer before the windows open.</span></div>
+                <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="afkBeforeLaunch"><span></span></label></div>
+              </div>
+              <div class="row" style="margin-top:8px">
+                <button class="btn primary lg" id="launch-btn"><svg class="i" data-icon="play"></svg><span>Launch selected accounts</span></button>
+                <button class="btn" id="preset-from-launch" title="Save this game, these accounts, and their FPS and macros as a one-click preset"><svg class="i" data-icon="grid"></svg>Save as preset</button>
+                <span class="muted small" id="launch-count"></span>
+              </div>
+              <div class="progress-box hidden" id="launch-progress" style="margin-top:14px"><div class="spinner"></div><span></span></div>
+            </div>
+          </div>
+
+          <div class="stack" style="gap:18px;align-self:start">
+          <div class="card" id="recent-card">
+            <div class="card-head"><div><h2 class="card-title">Recently played</h2><p class="card-sub">Games your windows joined. Click one to use it.</p></div></div>
+            <div class="favs" id="recent-list" style="margin-top:0"></div>
+            <p class="muted small hidden" id="recent-empty" style="margin:0">Games show up here after your accounts join them.</p>
+          </div>
+          <div class="card" id="friends-card">
+            <div class="card-head">
+              <div><h2 class="card-title">Friends in game</h2><p class="card-sub" id="friends-sub">Join their server with the accounts you've ticked.</p></div>
+              <button class="btn icon sm" id="friends-refresh" title="Check again now"><svg class="i" data-icon="refresh"></svg></button>
+            </div>
+            <div class="stack" id="friends-list" style="gap:8px"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2 class="card-title">How launching works</h2></div></div>
+            <ol class="how">
+              <li><b>One window at a time.</b> The app opens the first account, waits until its window is up, then opens the next.</li>
+              <li><b>Multi-instance is automatic.</b> Each new window is unlocked so the next one doesn't close it.</li>
+              <li><b>FPS per account.</b> Set "Opens at" on the Accounts page — e.g. 30 for the account that moves, 5 for the one that sits still.</li>
+              <li><b>No browser needed.</b> Your saved logins are used to join directly, through Bloxstrap if you have it.</li>
+              <li><b>Too many launches in a row</b> can make Roblox refuse for a minute. Just wait and try again.</li>
+            </ol>
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== PRESETS ===================== -->
+      <section class="page" id="page-presets">
+        <div class="card">
+          <div class="card-head">
+            <div><h2 class="card-title">Your presets</h2><p class="card-sub">One click opens a game with the right accounts, FPS and macros. ★ pins up to 3 to Home.</p></div>
+            <button class="btn primary sm" id="preset-save-current" title="Saves your last launch: the game, the accounts, and each one's FPS and macro"><svg class="i" data-icon="plus"></svg>Save current setup</button>
+          </div>
+          <div class="preset-grid" id="preset-grid"></div>
+          <div class="empty hidden" id="preset-empty">
+            <div class="big-icon"><svg class="i" data-icon="grid"></svg></div>
+            <b>No presets yet</b>
+            <span>Set a game up the way you like it (accounts, FPS, macros), launch it, then press <b>Save current setup</b>. Or use <b>Save as preset</b> on the Launch page.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== MACROS ===================== -->
+      <section class="page" id="page-macros">
+        <div class="card macro-hero">
+          <div class="hero-row">
+            <div class="hero-icon" id="macro-icon"></div>
+            <div class="hero-text">
+              <span class="label">Macro mode</span>
+              <h2 id="macro-title">No macro running</h2>
+              <p id="macro-sub"></p>
+            </div>
+            <div class="row" id="macro-actions"></div>
+          </div>
+          <div class="explain" id="macro-explain">
+            <div class="ex"><span class="n">1</span><div><b>Record or import a macro</b><span>Record your moves right inside a Roblox window, or import a TinyTask .rec file.</span></div></div>
+            <div class="ex"><span class="n">2</span><div><b>Give windows a macro</b><span>One, several, or all of them — they take turns. Windows without one stay idle with anti-AFK.</span></div></div>
+            <div class="ex"><span class="n">3</span><div><b>Start it and walk away</b><span>Best on a PC nobody's using. Touching the mouse or keyboard pauses it; F8 stops it.</span></div></div>
+          </div>
+        </div>
+
+        <div class="record-banner hidden" id="record-banner">
+          <span class="rec-dot"></span>
+          <div class="txt"><b id="rec-title">Recording</b><span id="rec-sub"></span></div>
+          <button class="btn sm" id="rec-stop">Stop recording (F8)</button>
+        </div>
+
+        <div class="grid split">
+          <div class="card">
+            <div class="card-head">
+              <div><h2 class="card-title">Windows</h2><p class="card-sub">Choose what each window does, and start as many as you like. Roblox only listens to the window in front, so windows with macros <b>take turns</b> — each plays its loops, then hands over to the next.</p></div>
+            </div>
+            <div class="stack" id="mwin-list"></div>
+            <div class="empty hidden" id="mwin-empty">
+              <b>No Roblox windows open</b>
+              <span>Launch your accounts first, then come back here to give one of them a macro.</span>
+              <button class="btn primary" data-goto="launch"><svg class="i" data-icon="rocket"></svg>Go to Launch</button>
+            </div>
+          </div>
+
+          <div class="card" style="align-self:start">
+            <div class="card-head"><div><h2 class="card-title">Safety</h2><p class="card-sub">So a macro never fights you for the mouse.</p></div></div>
+            <div class="setting-line"><div class="txt"><b>Pause when I use the PC</b><span>Any real key press, click or mouse movement pauses the macro instantly and lets go of every key.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="macroPauseOnInput"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Resume by itself</b><span>After this many seconds without you touching anything.</span></div>
+              <div class="ctl"><input class="input num" type="number" min="5" max="3600" data-cfg="macroResumeAfter"><span class="muted small">s</span>
+              <label class="switch"><input type="checkbox" data-cfg="macroAutoResume"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Pin the window in place</b><span>Keeps the macro window where it was when you pressed Start, so clicks always land in the right spot.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="macroPinWindows"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Emergency stop</b><span>Press <kbd>F8</kbd> anywhere to stop the macro (or finish a recording).</span></div>
+              <div class="ctl"><kbd class="big">F8</kbd></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div><h2 class="card-title">Your macros</h2><p class="card-sub">Recorded macros follow the window wherever it is. TinyTask imports use fixed screen positions until you fit them to a window.</p></div>
+            <div class="row">
+              <button class="btn primary sm" id="macro-record"><span class="rec-dot sm"></span>Record new</button>
+              <button class="btn sm" id="macro-import"><svg class="i" data-icon="file"></svg>Import TinyTask</button>
+            </div>
+          </div>
+          <div class="stack" id="macro-lib"></div>
+          <div class="empty hidden" id="macro-lib-empty">
+            <div class="big-icon"><svg class="i" data-icon="macro"></svg></div>
+            <b>No macros yet</b>
+            <span>Record one in a Roblox window, or import a TinyTask recording (.rec).</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ACCOUNTS ===================== -->
+      <section class="page" id="page-accounts">
+        <div class="row">
+          <button class="btn primary" id="acct-add"><svg class="i" data-icon="plus"></svg>Add account</button>
+          <button class="btn" id="acct-cookie"><svg class="i" data-icon="key"></svg>Add with cookie</button>
+          <button class="btn" id="acct-check"><svg class="i" data-icon="refresh"></svg>Check logins</button>
+        </div>
+        <div class="acct-grid" id="acct-grid"></div>
+        <div class="empty hidden" id="acct-empty">
+          <div class="big-icon"><svg class="i" data-icon="users"></svg></div>
+          <b>Add your first account</b>
+          <span>Click "Add account" and log in to Roblox in the window that opens. It closes by itself once you're in.</span>
+        </div>
+        <div class="card note">
+          <svg class="i" data-icon="shield"></svg>
+          <div>
+            <b style="color:var(--text)">Your logins stay on this PC.</b>
+            They're encrypted with your Windows account and only ever sent to roblox.com. They're useless on another PC,
+            but anything running as you could use them — the same as your browser's saved logins. Removing an account here doesn't
+            log it out on Roblox; to fully revoke it, use "Log out of all other sessions" in Roblox's settings.
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== STATS ===================== -->
+      <section class="page" id="page-stats">
+        <div class="grid grid-4">
+          <div class="card stat"><div class="head"><span class="label">Total AFK time</span><svg class="i" data-icon="clock"></svg></div><div class="value" id="tot-time">—</div><div class="foot">All sessions</div></div>
+          <div class="card stat"><div class="head"><span class="label">Sessions</span><svg class="i" data-icon="moon"></svg></div><div class="value" id="tot-sessions">0</div><div class="foot" id="tot-sessions-foot"></div></div>
+          <div class="card stat"><div class="head"><span class="label">Anti-AFK presses</span><svg class="i" data-icon="bolt"></svg></div><div class="value" id="tot-presses">0</div><div class="foot">Kicks prevented</div></div>
+          <div class="card stat"><div class="head"><span class="label">Disconnects</span><svg class="i" data-icon="alert"></svg></div><div class="value" id="tot-disc">0</div><div class="foot" id="tot-disc-foot"></div></div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head"><div><span class="label">AFK hours ▸</span><h2 class="card-title" style="margin-top:4px">Last 14 days</h2></div></div>
+            <svg class="chart" id="chart-hours"></svg>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><span class="label">Anti-AFK presses ▸</span><h2 class="card-title" style="margin-top:4px">Last 14 days</h2></div></div>
+            <svg class="chart" id="chart-presses"></svg>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h2 class="card-title">Past AFK sessions</h2><p class="card-sub">A session runs from "Start AFK mode" to "I'm back".</p></div></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Started</th><th>Length</th><th title="How long each account was actually in game. Red = it was out for a big part of the session.">Accounts · time in game</th><th>Presses</th><th>Disconnects</th><th>Rejoins</th></tr></thead>
+              <tbody id="sess-body"></tbody>
+            </table>
+          </div>
+          <div class="empty hidden" id="sess-empty"><b>No sessions yet</b><span>Press "Start AFK mode" (top right) to begin your first one.</span></div>
+        </div>
+      </section>
+
+      <!-- ===================== SETTINGS ===================== -->
+      <!-- Only what keeps you AFK, most important first. Looks and extras live on the Customize page. -->
+      <section class="page" id="page-settings">
+        <div class="settings-stack">
+          <details class="card fold" id="fold-ingame" open>
+            <summary class="card-head"><div><h2 class="card-title">Staying in game</h2><p class="card-sub">What happens when something goes wrong while you're away.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>Auto-rejoin</b><span>Rejoin any account that drops out during AFK mode.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="autoRejoin"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Frozen window recovery</b><span>Rejoin a window that's "Not responding" this long.</span></div>
+              <div class="ctl"><input class="input num" type="number" min="1" max="30" data-cfg="freezeMinutes"><span class="muted small">min</span>
+                <label class="switch"><input type="checkbox" data-cfg="freezeRecovery"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Resume after a restart</b><span>If the PC restarts mid-AFK, relaunch the same setup (45 s to cancel).</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="autoResume"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Start with Windows</b><span>Open in the tray when the PC turns on.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="startWithWindows"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Rejoin timer</b><span>Move everyone to a fresh server every few hours.</span></div>
+              <div class="ctl"><select class="input" data-cfg="rejoinEveryHours">
+                <option value="0">Off</option><option value="1">Every hour</option><option value="2">Every 2 hours</option><option value="3">Every 3 hours</option>
+                <option value="4">Every 4 hours</option><option value="6">Every 6 hours</option><option value="8">Every 8 hours</option><option value="12">Every 12 hours</option>
+              </select></div></div>
+          </details>
+
+          <details class="card fold" id="fold-antiafk" open>
+            <summary class="card-head"><div><h2 class="card-title">Anti-AFK</h2><p class="card-sub">Roblox kicks you after 20 minutes idle. Each window has its own timer.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>Press a key after</b><span>Minutes of no activity in a window.</span></div>
+              <div class="ctl"><input class="input num" type="number" min="1" max="19" data-cfg="antiAfkMinutes"><span class="muted small">min</span></div></div>
+            <div class="setting-line"><div class="txt"><b>Key to press</b><span>Backslash does nothing visible in almost every game.</span></div>
+              <div class="ctl"><select class="input" data-cfg="antiAfkKey" id="key-select"></select></div></div>
+            <div class="setting-line"><div class="txt"><b>Wait while I'm using the PC</b><span>Don't switch windows while you're typing or moving the mouse.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="waitWhileBusy"><span></span></label></div></div>
+          </details>
+
+          <details class="card fold" id="fold-afk" open>
+            <summary class="card-head"><div><h2 class="card-title">AFK mode</h2><p class="card-sub">"Start AFK mode" switches FPS; "I'm back" puts it back.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>AFK FPS</b><span>Lower means less heat and power.</span></div>
+              <div class="ctl"><input class="input num" type="number" min="1" max="999" data-cfg="afkFps"></div></div>
+            <div class="setting-line"><div class="txt"><b>Normal FPS</b><span>What "I'm back" restores.</span></div>
+              <div class="ctl"><input class="input num" type="number" min="1" max="999" data-cfg="normalFps"></div></div>
+          </details>
+
+          <details class="card fold" id="fold-alerts" open>
+            <summary class="card-head"><div><h2 class="card-title">Alerts</h2><p class="card-sub">Know when an account drops out, here and on your phone.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>On this PC</b><span>Sound and a Windows notification.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="alertOnDisconnect"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Discord webhook</b><span id="webhook-detail">Not set up yet.</span></div>
+              <div class="ctl"><input class="input" type="password" style="width:240px;font-family:var(--mono)" id="webhook-input" placeholder="https://discord.com/api/webhooks/…" spellcheck="false" autocomplete="off">
+                <button class="btn sm" id="webhook-save">Save</button><button class="btn sm" id="webhook-test">Test</button></div></div>
+            <details class="how-fold">
+              <summary>How do I get a webhook link?</summary>
+              <ol class="how">
+                <li>Make a channel in your Discord server. To keep it private: <b>Edit Channel → Permissions → Private Channel</b>.</li>
+                <li><b>Edit Channel → Integrations → Webhooks → New Webhook → Copy Webhook URL.</b></li>
+                <li>Paste it above, press <b>Save</b>, then <b>Test</b>. Keep the link private: anyone who has it can post in that channel.</li>
+              </ol>
+            </details>
+            <div class="setting-line sub-line"><div class="txt"><b>Problems</b><span>Drops, rejoins, frozen windows.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="webhookDisconnects"><span></span></label></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Live status</b><span>One message that updates itself every 2 minutes. Pin it to check from your phone.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="webhookLiveStatus"><span></span></label></div></div>
+            <div class="setting-line sub-line" style="padding-left:36px"><div class="txt"><b>With a picture of the Roblox windows</b><span>Only the game windows, never the rest of your screen.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="liveScreenshot"><span></span></label></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Check-ins</b><span>A separate message with how many accounts are in game.</span></div>
+              <div class="ctl"><select class="input" data-cfg="webhookCheckinHours">
+                <option value="0">Off</option><option value="1">Every hour</option><option value="2">Every 2 hours</option><option value="3">Every 3 hours</option>
+                <option value="6">Every 6 hours</option></select></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Session summary</b><span>When you press "I'm back".</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="webhookSummary"><span></span></label></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Automatic actions</b><span>Schedule, rejoin timer, resuming after a restart.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="webhookActions"><span></span></label></div></div>
+          </details>
+
+          <details class="card fold" id="fold-power" open>
+            <summary class="card-head"><div><h2 class="card-title">Power</h2><p class="card-sub">A sleeping or locked PC disconnects Roblox.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>Keep the PC awake</b><span>While AFK mode is on or Roblox is open.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="keepAwake"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Keep the screen on too</b><span>A screen that turns off can lock Windows.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="keepScreenOn"><span></span></label></div></div>
+            <p class="muted small" style="margin:8px 0 0">Laptop lid closed? Power Options → "Choose what closing the lid does" → Do nothing.</p>
+          </details>
+
+          <details class="card fold" id="fold-schedule">
+            <summary class="card-head"><div><h2 class="card-title">Schedule</h2><p class="card-sub" id="schedule-detail">AFK mode on and off at set times, every day.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>AFK schedule</b><span>Start and end times.</span></div>
+              <div class="ctl"><input class="input" type="time" style="width:138px" data-cfg="scheduleStart" title="Start"><span class="muted small">to</span>
+                <input class="input" type="time" style="width:138px" data-cfg="scheduleStop" title="Stop">
+                <label class="switch"><input type="checkbox" data-cfg="scheduleOn"><span></span></label></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Launch my last setup at the start</b><span>Otherwise it only turns AFK mode on.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="scheduleLaunch"><span></span></label></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Close Roblox at the end</b></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="scheduleCloseRoblox"><span></span></label></div></div>
+          </details>
+
+          <details class="card fold" id="fold-advanced">
+            <summary class="card-head"><div><h2 class="card-title">Advanced</h2><p class="card-sub">Multi-instance, tray, files.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>Allow multiple Roblox windows</b><span id="multi-detail"></span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="multiInstance"><span></span></label></div></div>
+            <div class="setting-line" id="admin-line"><div class="txt"><b>Run as administrator</b><span>Only if a window shows "Blocked".</span></div>
+              <div class="ctl"><button class="btn sm" id="restart-admin"><svg class="i" data-icon="shield"></svg>Restart as admin</button></div></div>
+            <div class="setting-line"><div class="txt"><b>Show the Macros tab</b><span>Record or import moves for a window to play on loop.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="showMacros"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Minimize to the tray</b><span>Uses almost nothing while hidden there.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="minimizeToTray"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Start Roblox's own tray app with Windows</b><span>Not needed for anything here.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" id="autostart"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Portable (USB stick)</b><span id="portable-detail">Keep all data in a folder next to the app.</span></div>
+              <div class="ctl"><button class="btn sm" id="make-portable"><svg class="i" data-icon="folder"></svg>Make portable</button></div></div>
+            <div class="setting-line"><div class="txt"><b>Files</b><span>The app's data (including activity.log) and Roblox's settings file.</span></div>
+              <div class="ctl"><button class="btn sm" id="open-data"><svg class="i" data-icon="folder"></svg>Data folder</button><button class="btn sm" id="open-settings-file"><svg class="i" data-icon="file"></svg>Roblox settings</button></div></div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ===================== MISC ===================== -->
+      <section class="page" id="page-misc">
+        <div class="settings-stack">
+          <div class="card">
+            <div class="card-head"><div><h2 class="card-title">Credits</h2><p class="card-sub">The people and tools behind Roblox AFK Hub.</p></div></div>
+            <div class="setting-line"><div class="txt"><b>Made by swag</b><span>Idea, design and testing.</span></div></div>
+            <div class="setting-line"><div class="txt"><b>Built with Claude</b><span>Code written together with Claude, Anthropic's AI.</span></div></div>
+            <div class="setting-line"><div class="txt"><b>Inspired by Spencer's AFK macro</b><span>The original anti-AFK idea this app grew from.</span></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2 class="card-title">About</h2><p class="card-sub" id="misc-version">Version</p></div></div>
+            <div class="setting-line"><div class="txt"><b>Updates</b><span id="update-status">Updates come from this app's official GitHub page and are checked against their fingerprint before installing.</span></div>
+              <div class="ctl"><button class="btn sm" id="update-check"><svg class="i" data-icon="refresh"></svg>Check now</button><button class="btn primary sm hidden" id="update-install">Update</button></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Check automatically</b><span>A minute after opening, then twice a day.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="autoUpdateCheck"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Activity log</b><span>Everything the app did, with times. Send it along when reporting a problem.</span></div>
+              <div class="ctl"><button class="btn sm" id="open-activity"><svg class="i" data-icon="file"></svg>Open log</button></div></div>
+            <div class="setting-line"><div class="txt"><b>Data folder</b><span>Settings, accounts, macros, presets and stats.</span></div>
+              <div class="ctl"><button class="btn sm" id="misc-open-data"><svg class="i" data-icon="folder"></svg>Open folder</button></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CUSTOMIZE ===================== -->
+      <section class="page" id="page-customize">
+        <div class="settings-stack">
+          <div class="card lite-card">
+            <div class="setting-line" style="padding:0">
+              <div class="txt"><b style="font-size:15px">Lite mode</b>
+                <span>Turns off every extra below in one go. Anti-AFK, launching and macros keep running.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="liteMode"><span></span></label></div>
+            </div>
+          </div>
+
+          <details class="card fold" id="fold-look" open>
+            <summary class="card-head"><div><h2 class="card-title">Appearance</h2><p class="card-sub">Also switchable from the dots in the sidebar.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="theme-grid" id="theme-grid"></div>
+            <div class="setting-line" style="margin-top:12px">
+              <div class="txt"><b>Main account</b><span>Who Home greets and shows.</span></div>
+              <div class="ctl"><select class="input" data-cfg="mainAccount" id="main-account"></select></div></div>
+            <div class="setting-line" data-lite><div class="txt"><b>Show my avatar on Home</b></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="showAvatar"><span></span></label></div></div>
+            <div class="setting-line" data-lite><div class="txt"><b>Avatar effects</b><span>Float and mouse tilt.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="avatarEffects"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Reduce effects</b><span>No blur or animations. Good for slower PCs.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="reduceEffects"><span></span></label></div></div>
+          </details>
+
+          <details class="card fold" id="fold-extras" data-lite open>
+            <summary class="card-head"><div><h2 class="card-title">Extras</h2><p class="card-sub">Checked about once a minute, only while this window is open.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>Friends in game</b><span>With a Join button on the Launch page.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="showFriends"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Account status</b><span>"In (game)", Online or Offline.</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="showPresence"><span></span></label></div></div>
+          </details>
+
+          <details class="card fold" id="fold-discord" data-lite>
+            <summary class="card-head"><div><h2 class="card-title">Discord status</h2><p class="card-sub">Show what you're AFKing in on your Discord profile.</p></div><svg class="i chev" data-icon="chev"></svg></summary>
+            <div class="setting-line"><div class="txt"><b>Show my AFK status on Discord</b><span id="discord-status">Off</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="discordRpc"><span></span></label></div></div>
+            <div class="setting-line"><div class="txt"><b>Discord Application ID</b><span>Its name is what Discord shows as "Playing".</span></div>
+              <div class="ctl"><input class="input" style="width:220px;font-family:var(--mono)" data-cfg="discordAppId" placeholder="e.g. 1234567890123456789" spellcheck="false"></div></div>
+            <details class="how-fold">
+              <summary>How do I get an Application ID?</summary>
+              <ol class="how">
+                <li>Open <a href="https://discord.com/developers/applications" target="_blank">discord.com/developers/applications</a> and log in.</li>
+                <li>Click <b>New Application</b> and name it (that's the "Playing" name).</li>
+                <li>On <b>General Information</b>, copy the <b>Application ID</b>, paste it above and switch this on.</li>
+              </ol>
+            </details>
+            <div class="setting-line sub-line"><div class="txt"><b>Only while AFKing</b></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="discordOnlyWhileAfk"><span></span></label></div></div>
+            <div class="setting-line sub-line"><div class="txt"><b>Show the game</b><span>Off shows just "AFK in Roblox".</span></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" data-cfg="discordShowGame"><span></span></label></div></div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div id="toasts"></div>
+<div id="modal-root"></div>
+<script src="app.js"></script>
+</body>
+</html>
